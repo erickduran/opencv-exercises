@@ -4,17 +4,9 @@ import glob
 import math
 
 HORIZONTAL = LINEAL = 1
-VERTICAL = 2
+VERTICAL = RADIAL = 2
 DIAGONAL = 3
-def gkern2(kernlen=21, nsig=3):
-    """Returns a 2D Gaussian kernel array."""
 
-    # create nxn zeros
-    inp = np.zeros((kernlen, kernlen))
-    # set element at the middle to one, a dirac delta
-    inp[kernlen//2, kernlen//2] = 1
-    # gaussian-smooth the dirac, resulting in a gaussian filter mask
-    return fi.gaussian_filter(inp, nsig)
 def select_image():
     lst = glob.glob('../res/*.png')
     counter = 0
@@ -70,10 +62,19 @@ if degradacion == LINEAL:
     cv2.imshow('Motion Blur', output)
     cv2.waitKey(0)
 
-if degradacion == 2:
+if degradacion == RADIAL:
     kernel_motion_blur = np.zeros((size, size))
+    a = b = math.floor(size / 2)
+    r = size / 2 - 1
+    EPSILON = 3
+    # draw the circle
+    for y in range(size):
+        for x in range(size):
+            # see if we're close to (x-a)**2 + (y-b)**2 == r**2
+            if abs((x-a)**2 + (y-b)**2 - r**2) < EPSILON**2:
+                kernel_motion_blur[y][x] = 1
+    kernel_motion_blur = kernel_motion_blur / size
 
-    
     # applying the kernel to the input image
     output = cv2.filter2D(img, -1, kernel_motion_blur)
 
