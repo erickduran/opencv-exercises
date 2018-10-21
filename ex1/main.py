@@ -63,20 +63,27 @@ if degradacion == LINEAL:
     cv2.waitKey(0)
 
 if degradacion == RADIAL:
-    kernel_motion_blur = np.zeros((size, size))
+    kernel_motion_blur = np.ones((size, size))
     a = b = math.floor(size / 2)
-    r = size / 2 - 1
-    EPSILON = 3
+    r = size / 2 - 16
+    r2 = size/2 - 2
+    EPSILON = 4
     # draw the circle
     for y in range(size):
         for x in range(size):
             # see if we're close to (x-a)**2 + (y-b)**2 == r**2
-            if abs((x-a)**2 + (y-b)**2 - r**2) < EPSILON**2:
-                kernel_motion_blur[y][x] = 1
+            if (x-a)**2 + (y-b)**2 - r**2 < EPSILON ** 2:
+                kernel_motion_blur[y][x] = 0
+    cv2.imshow('Kernel', kernel_motion_blur)
     kernel_motion_blur = kernel_motion_blur / size
-
+    
     # applying the kernel to the input image
+    print(img)
+    np.array(img, dtype='float32')
     output = cv2.filter2D(img, -1, kernel_motion_blur)
-
+    np.array(output, dtype='uint8')
+    
+    print(output)
     cv2.imshow('Motion Blur', output)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
