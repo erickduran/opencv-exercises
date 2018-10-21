@@ -1,9 +1,22 @@
 import cv2
 import numpy as np
+import glob
 
-img = cv2.imread('lena.png')
+def select_image():
+    lst = glob.glob('../res/*.png')
+    counter = 0
+    for image in lst:
+        image_name = image.split('/')
+        print(str(counter) + '.- ' + image_name[-1])
+        counter = counter + 1
+    index = int(input('Selecciona Indice de Imagen a utilizar: '))
+    return lst[index]
 
-size = int(input("Ingrese la variable d:"))
+uri = select_image()
+
+img = cv2.imread(uri)
+
+size = int(input('Ingrese la variable d:'))
 
 # generating the kernel
 kernel_motion_blur = np.zeros((size, size))
