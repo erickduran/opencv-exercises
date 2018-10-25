@@ -5,7 +5,7 @@ import math
 
 HORIZONTAL = LINEAL = 1
 VERTICAL = RADIAL = 2
-DIAGONAL = 3
+DIAGONAL = ZOOM = 3
 
 def select_image():
     lst = glob.glob('../res/*.png')
@@ -63,27 +63,57 @@ if degradacion == LINEAL:
     cv2.waitKey(0)
 
 if degradacion == RADIAL:
-    kernel_motion_blur = np.ones((size, size))
-    a = b = math.floor(size / 2)
-    r = size / 2 - 16
-    r2 = size/2 - 2
-    EPSILON = 4
-    # draw the circle
-    for y in range(size):
-        for x in range(size):
-            # see if we're close to (x-a)**2 + (y-b)**2 == r**2
-            if (x-a)**2 + (y-b)**2 - r**2 < EPSILON ** 2:
-                kernel_motion_blur[y][x] = 0
-    cv2.imshow('Kernel', kernel_motion_blur)
+
+    kernel_motion_blur = np.zeros((size, size))
+
+    img64_float = img.copy()
+
+    Mvalue = np.sqrt(((img64_float.shape[0]/2.0)**2.0)+((img64_float.shape[1]/2.0)**2.0))
+
+
+    ploar_image = cv2.linearPolar(img64_float,(img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue,cv2.WARP_FILL_OUTLIERS)
+
+
+    kernel_motion_blur[:, int((size-1)/2)] = np.ones(size)
     kernel_motion_blur = kernel_motion_blur / size
-    
-    # applying the kernel to the input image
-    print(img)
-    np.array(img, dtype='float32')
-    output = cv2.filter2D(img, -1, kernel_motion_blur)
-    np.array(output, dtype='uint8')
-    
-    print(output)
-    cv2.imshow('Motion Blur', output)
+
+    ploar_image = cv2.filter2D(ploar_image, -1, kernel_motion_blur)
+
+    cartisian_image = cv2.linearPolar(ploar_image, (img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue, cv2.WARP_INVERSE_MAP)
+
+    cartisian_image = cartisian_image/200
+    ploar_image = ploar_image/255
+
+    cv2.imshow('Radial Blur', cartisian_image)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+
+if degradacion == ZOOM:
+
+    kernel_motion_blur = np.zeros((size, size))
+
+    img64_float = img.copy()
+
+    Mvalue = np.sqrt(((img64_float.shape[0]/2.0)**2.0)+((img64_float.shape[1]/2.0)**2.0))
+
+
+    ploar_image = cv2.linearPolar(img64_float,(img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue,cv2.WARP_FILL_OUTLIERS)
+
+
+    kernel_motion_blur[int((size-1)/2), :] = np.ones(size)
+    kernel_motion_blur = kernel_motion_blur / size
+
+    ploar_image = cv2.filter2D(ploar_image, -1, kernel_motion_blur)
+
+    cartisian_image = cv2.linearPolar(ploar_image, (img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue, cv2.WARP_INVERSE_MAP)
+
+    cartisian_image = cartisian_image/200
+    ploar_image = ploar_image/255
+
+    cv2.imshow('Radial Blur', cartisian_image)
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
