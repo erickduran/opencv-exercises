@@ -2,13 +2,25 @@ import cv2
 import numpy as np
 import glob
 import math
+import urllib.request as ur
+
 
 HORIZONTAL = LINEAL = 1
 VERTICAL = RADIAL = 2
 DIAGONAL = ZOOM = 3
 
+def url_to_image(url):
+	# download the image, convert it to a NumPy array, and then read
+	# it into OpenCV format
+	resp = ur.urlopen(url)
+	image = np.asarray(bytearray(resp.read()), dtype="uint8")
+	image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+ 
+	# return the image
+	return image
+
 def select_image():
-    lst = glob.glob('../res/*.png')
+    lst = ['https://erickduran.com/lena.png', 'https://erickduran.com/greenscreen.png', 'https://erickduran.com/face.png', 'https://erickduran.com/greenscreen2.png']
     counter = 0
     for image in lst:
         image_name = image.split('/')
@@ -19,7 +31,7 @@ def select_image():
 
 uri = select_image()
 
-img = cv2.imread(uri)
+img = url_to_image(uri)
 
 size = int(input('Ingrese la magnitud :'))
 
