@@ -10,13 +10,9 @@ VERTICAL = RADIAL = 2
 DIAGONAL = ZOOM = 3
 
 def url_to_image(url):
-	# download the image, convert it to a NumPy array, and then read
-	# it into OpenCV format
 	resp = ur.urlopen(url)
 	image = np.asarray(bytearray(resp.read()), dtype="uint8")
 	image = cv2.imdecode(image, cv2.IMREAD_COLOR)
- 
-	# return the image
 	return image
 
 def select_image():
@@ -82,15 +78,12 @@ if degradacion == RADIAL:
 
     Mvalue = np.sqrt(((img64_float.shape[0]/2.0)**2.0)+((img64_float.shape[1]/2.0)**2.0))
 
-
     ploar_image = cv2.linearPolar(img64_float,(img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue,cv2.WARP_FILL_OUTLIERS)
-
 
     kernel_motion_blur[:, int((size-1)/2)] = np.ones(size)
     kernel_motion_blur = kernel_motion_blur / size
-
+   
     ploar_image = cv2.filter2D(ploar_image, -1, kernel_motion_blur)
-
     cartisian_image = cv2.linearPolar(ploar_image, (img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue, cv2.WARP_INVERSE_MAP)
 
     cartisian_image = cartisian_image/200
@@ -101,8 +94,6 @@ if degradacion == RADIAL:
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-
-
 if degradacion == ZOOM:
 
     kernel_motion_blur = np.zeros((size, size))
@@ -111,9 +102,7 @@ if degradacion == ZOOM:
 
     Mvalue = np.sqrt(((img64_float.shape[0]/2.0)**2.0)+((img64_float.shape[1]/2.0)**2.0))
 
-
     ploar_image = cv2.linearPolar(img64_float,(img64_float.shape[0]/2, img64_float.shape[1]/2),Mvalue,cv2.WARP_FILL_OUTLIERS)
-
 
     kernel_motion_blur[int((size-1)/2), :] = np.ones(size)
     kernel_motion_blur = kernel_motion_blur / size
