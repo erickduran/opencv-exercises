@@ -64,7 +64,7 @@ elif filter_index == 1:
 
 elif filter_index == 2:
 	canny_x = int(input('Selecciona el tamaño en x del kernel de Canny (recomendado: 100): '))
-	canny_y = int(input('Selecciona el tamaño en x del kernel de Canny (recomendado: 100): '))
+	canny_y = int(input('Selecciona el tamaño en y del kernel de Canny (recomendado: 100): '))
 	img_canny = cv2.Canny(img,canny_x,canny_y)
 
 	cv2.imshow("Sobel", img_canny)
